@@ -4,7 +4,7 @@ public class LivroVo {
 
     private Long id;
 
-    private String nome;
+    private String titulo;
     
     private String editora;
     
@@ -14,15 +14,15 @@ public class LivroVo {
         return id;
     }
         
-    public String getNome() {
-        return nome;
+    public String getTitulo() {
+        return titulo;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     public String getEditora() {
@@ -45,7 +45,7 @@ public class LivroVo {
     public String toString() {
         return "LivroVo{" +
             "id=" + id +
-            ", nome='" + nome + '\'' +
+            ", titulo='" + titulo + '\'' +
             ", editora='" + editora + '\'' +
             ", escritor='" + escritor +'\'' +
             '}';

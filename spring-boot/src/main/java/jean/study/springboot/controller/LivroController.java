@@ -37,9 +37,27 @@ public class LivroController {
 
     /**
      * Metodo que retorna todos os livros cadastrados
+     * @param titulo
+     * @param escritor
+     * @param editora
+     * @return 
      */
     @GetMapping
-    public List<LivroVo> consultarLivros() {
-        return livroService.consultarTodos();
+    public List<LivroVo> consultarLivros(
+           @RequestParam(name = "titulo", required = false, defaultValue = "") String titulo,
+           @RequestParam(name = "escritor", required = false, defaultValue = "") String escritor,
+           @RequestParam(name = "editora", required = false, defaultValue = "") String editora) {
+                
+        return livroService.consultar(titulo, escritor, editora);        
+    }
+    
+    @PostMapping("/{id}")
+    public void alterarLivro(@PathVariable long id, @RequestBody @Valid LivroVo livroVo){
+        livroService.atualizar(livroVo, id);
+    }
+    
+    @DeleteMapping("/{id}")
+    public void excluirLivro(@PathVariable long id) {
+        livroService.excluir(id);
     }
 }

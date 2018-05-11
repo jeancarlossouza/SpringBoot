@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.ValidationException;
 
 /**
@@ -21,6 +22,7 @@ public class LivroService {
 
     /**
      * Metodo construtor
+     *
      * @param livroRepository
      */
     public LivroService(LivroRepository livroRepository) {
@@ -29,36 +31,77 @@ public class LivroService {
 
     /**
      * Metodo para inserir entidade livro
+     *
      * @param livroVo
      */
     @Transactional
     public void inserir(@Valid LivroVo livroVo) {
-                
+
         Livro livro = new Livro();
-        livro.setNome(livroVo.getNome());
+        livro.setTitulo(livroVo.getTitulo());
         livro.setEditora(livroVo.getEditora());
         livro.setEscritor(livroVo.getEscritor());
-        
-        if (livroRepository.findByNomeContaining(livroVo.getNome()) != null) {
+
+        if (livroRepository.findByTituloContaining(livroVo.getTitulo()) != null) {
             throw new ValidationException("Livro ja cadastrado!");
         }
-                
+
         livroRepository.saveAndFlush(livro);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LivroVo> consultar(String titulo, String escritor, String editora) {
+
+        if (titulo.isEmpty() && escritor.isEmpty() && editora.isEmpty()) {
+            return consultarTodos();
+
+        } else {
+
+            List<LivroVo> lista = new ArrayList<>();
+            lista.add(consultarLivro(titulo, escritor, editora));
+
+            return lista;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    private LivroVo consultarLivro(String titulo, String escritor, String editora) {
+      
+        Livro livro = new Livro();
+
+        if (!titulo.isEmpty()) {
+            livro = livroRepository.findByTituloContaining(titulo);
+        } else if (!escritor.isEmpty()) {
+            livro = livroRepository.findByEscritorContaining(escritor);
+        } else if (!editora.isEmpty()) {
+            livro = livroRepository.findByEditoraContaining(editora);
+        }
+
+        LivroVo livroVo = new LivroVo();
+        livroVo.setId(livro.getId());
+        livroVo.setTitulo(livro.getTitulo());
+        livroVo.setEditora(livro.getEditora());
+        livroVo.setEscritor(livro.getEscritor());
+
+        return livroVo;
     }
 
     /**
      * Metodo que retorna todos os livros cadastrados
+     *
+     * @return
      */
     @Transactional(readOnly = true)
     public List<LivroVo> consultarTodos() {
-        List<Livro> livros = livroRepository.findAll();
 
         List<LivroVo> resultado = new ArrayList<>();
+
+        List<Livro> livros = livroRepository.findAll();
 
         for (Livro livro : livros) {
             LivroVo livroVo = new LivroVo();
             livroVo.setId(livro.getId());
-            livroVo.setNome(livro.getNome());
+            livroVo.setTitulo(livro.getTitulo());
             livroVo.setId(livro.getId());
             livroVo.setEditora(livro.getEditora());
             livroVo.setEscritor(livro.getEscritor());
@@ -68,20 +111,31 @@ public class LivroService {
         resultado.forEach(System.out::println);
         return resultado;
     }
-    
+
     @Transactional
-    public void atualizarLivro(@Valid LivroVo livroVo, long id) {
-                
+    public void atualizar(@Valid LivroVo livroVo, long id) {
+
         Livro livro = new Livro();
         livro.setId(id);
-        livro.setNome(livroVo.getNome());
+        livro.setTitulo(livroVo.getTitulo());
         livro.setEditora(livroVo.getEditora());
         livro.setEscritor(livroVo.getEscritor());
-        
-        if (livroRepository.findByNomeContaining(livroVo.getNome()) == null) {
+
+        Optional<Livro> livroExist = livroRepository.findById(id);
+
+        if (livroExist == null) {
             throw new ValidationException("Livro não encontrado!");
         }
-                
+
         livroRepository.saveAndFlush(livro);
+    }
+
+    @Transactional
+    public void excluir(@Valid long id) {
+        if (livroRepository.findById(id) == null) {
+            throw new ValidationException("Livro não encontrado!");
+        }
+
+        livroRepository.deleteById(id);
     }
 }

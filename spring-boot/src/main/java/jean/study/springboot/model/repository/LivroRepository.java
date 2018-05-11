@@ -8,5 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface LivroRepository extends JpaRepository<Livro, Long> {
 
-    Livro findByNomeContaining(String nome);
+    Livro findByTituloContaining(String titulo);
+    
+    Livro findByEscritorContaining(String autor);
+    
+    Livro findByEditoraContaining(String editora);
+        
 }

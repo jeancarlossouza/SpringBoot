@@ -14,8 +14,8 @@ public class Livro {
     @Column(name = "id", unique = true, nullable = false)
     private Long id ;
 
-    @Column(name = "nome", unique = true)
-    private String nome;
+    @Column(name = "titulo", unique = true)
+    private String titulo;
     
     @Column(name = "editora")
     private String editora;
@@ -31,12 +31,12 @@ public class Livro {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getTitulo() {
+        return titulo;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     public String getEditora() {
